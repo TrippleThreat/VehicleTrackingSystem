@@ -1,14 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome Home</title>
+    <title>Home Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            color: #333;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h2>Welcome, <span th:text="${username}"></span>!</h2>
-    <p>You have successfully logged in!</p>
 
-    <a href="/logout">Logout</a>
+    <h1>Welcome to the Vehicle Registration System</h1>
+    <p>Click below to register your vehicle:</p>
+    
+    <!-- Example link to trigger vehicle registration -->
+    <a href="/vehicle/register" class="btn">Register Vehicle</a>
+
+    <footer>
+        <p>&copy; 2025 Vehicle Registration System</p>
+    </footer>
+
 </body>
 </html>

@@ -1,23 +1,16 @@
-package com.example.controller;  // Use appropriate package for your project
+package com.example.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController // This is shorthand for @Controller + @ResponseBody
 public class HomeController {
 
-    // Define a method to map the /home URL after successful login
-    @GetMapping("/home")
-    public String home(Model model, Authentication authentication) {
-        // Get the current authenticated user
-        User user = (User) authentication.getPrincipal();
-        // Add user information to the model (optional)
-        model.addAttribute("username", user.getUsername());
-
-        // Return the name of the HTML template to be rendered (home.html)
-        return "home";  // Thymeleaf will look for home.html in src/main/resources/templates
+    @GetMapping("/home")  // Using @GetMapping for GET requests
+    public String home() {
+        return "Welcome to the Home Page!"; // This will be returned as plain text or JSON (if configured)
     }
 }
+
+
+

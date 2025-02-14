@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>   
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -9,18 +10,12 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <!-- Spring Boot 3.x -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.0</version> <!-- Spring Boot version -->
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>3.1.0</version> <!-- Updated to a compatible Spring Boot version -->
+        <relativePath/>
     </parent>
-
-    <properties>
-        <!-- Set Java version to 21 (compatible with Spring Boot 3.x) -->
-        <java.version>21</java.version>
-    </properties>
 
     <dependencies>
         <!-- Spring Boot Web (REST API) -->
@@ -29,11 +24,11 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Spring Security (No version needed, managed by Spring Boot starter parent) -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
+        <!-- Removed Spring Security dependency to fully disable security -->
+        <!-- <dependency> -->
+        <!-- <groupId>org.springframework.boot</groupId> -->
+        <!-- <artifactId>spring-boot-starter-security</artifactId> -->
+        <!-- </dependency> -->
 
         <!-- Spring Data JPA -->
         <dependency>
@@ -41,11 +36,25 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- PostgreSQL Driver (Version managed by Spring Boot) -->
+        <!-- PostgreSQL Driver -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <!-- No version here; Spring Boot manages it -->
+            <!-- Updated to a compatible version -->
+        </dependency>
+
+        <!-- Hibernate Validator (Java Bean Validation) -->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <!-- Spring Boot manages the version -->
+        </dependency>
+
+        <!-- Validation API (required for @Valid annotation) -->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>2.0.1.Final</version> <!-- Keep this version for validation support -->
         </dependency>
 
         <!-- Spring Boot DevTools (for automatic reloads during development) -->
@@ -62,12 +71,11 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Thymeleaf for Template Rendering -->
+        <!-- Thymeleaf dependency for rendering templates -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -78,18 +86,15 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-            <!-- Maven Resources Plugin (no need to specify version as Spring Boot manages it) -->
+            <!-- Maven Compiler Plugin for JDK Version Compatibility -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-            </plugin>
-
-            <!-- Maven Clean Plugin (no need to specify version as Spring Boot manages it) -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>21</source> <!-- Set the source to JDK 21 -->
+                    <target>21</target> <!-- Set the target to JDK 21 -->
+                </configuration>
             </plugin>
         </plugins>
     </build>
-
 </project>

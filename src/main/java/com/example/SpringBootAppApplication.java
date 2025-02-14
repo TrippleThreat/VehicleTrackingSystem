@@ -1,14 +1,15 @@
-package com.example; // Ensure the package name matches the directory structure
+package com.example;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication // This annotation enables Spring Boot auto-configuration
+@SpringBootApplication
 public class SpringBootAppApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SpringBootAppApplication.class, args); // Starts the Spring Boot application
+        SpringApplication.run(SpringBootAppApplication.class, args);
     }
 }
+
 
 
