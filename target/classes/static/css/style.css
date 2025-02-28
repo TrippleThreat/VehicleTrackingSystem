@@ -1,26 +1,24 @@
-/* General Body Styling */
+/* Styling as before */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f8ff;  /* Light background for brightness */
+    background-color: #f0f8ff;
     padding: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column; /* Make items stack vertically */
-    min-height: 100vh; /* Vertically center the content */
+    flex-direction: column;
+    min-height: 100vh;
     margin: 0;
 }
 
-/* Header Styling */
 h1 {
     color: #333;
     text-align: center;
     margin-bottom: 20px;
 }
 
-/* Form Styling */
 form {
-    background: linear-gradient(145deg, #ff5c8d, #ff7db5);  /* Bright gradient background */
+    background: linear-gradient(145deg, #ff5c8d, #ff7db5);
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
@@ -39,7 +37,7 @@ form div {
 form label {
     display: block;
     font-weight: bold;
-    color: #fff;  /* White text for labels */
+    color: #fff;
     margin-bottom: 5px;
 }
 
@@ -54,14 +52,8 @@ form input {
     color: #333;
 }
 
-form input:focus {
-    border-color: #ff5c8d;  /* Highlight border on focus */
-    outline: none;
-}
-
-/* Submit Button Styling */
 form button {
-    background-color: #ff5c8d;  /* Bright pink button */
+    background-color: #ff5c8d;
     color: white;
     padding: 12px 20px;
     border: none;
@@ -72,34 +64,19 @@ form button {
 }
 
 form button:hover {
-    background-color: #ff2d6f;  /* Darker pink on hover */
+    background-color: #ff2d6f;
 }
 
-/* Error Message Styling */
-div.error-message {
+.error-message {
     color: red;
     font-weight: bold;
-    margin-top: 15px;
+    margin-top: 5px;
+    font-size: 14px;
 }
 
-/* Make sure the form is centered */
-html, body {
-    height: 80%;
-    margin: 0;
-}
-
-/* Add padding around the form elements */
-form div {
-    padding: 8px 0;
-}
-
-/* Example Media Query */
-@media (max-width: 600px) {
-    body {
-        background-color: lightgray;
-    }
-    form {
-        padding: 15px;
-        max-width: 100%;
-    }
+.success-message {
+    color: green;
+    font-weight: bold;
+    margin-top: 10px;
+    font-size: 16px;
 }

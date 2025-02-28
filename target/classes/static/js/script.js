@@ -1,64 +1,55 @@
-// Example JavaScript function to show a confirmation message after vehicle registration 
-function showSuccessMessage(message) {
-    const successDiv = document.getElementById('success-message');
-    successDiv.innerHTML = message;
-    successDiv.style.display = 'block';  // Make the success message visible
-    setTimeout(() => successDiv.style.display = 'none', 5000);  // Hide after 5 seconds
-}
+async function submitVehicleRegistration(event) {
+    event.preventDefault(); // Prevent form submission
 
-function showErrorMessage(message) {
-    const errorDiv = document.getElementById('error-message');
-    errorDiv.innerHTML = message;
-    errorDiv.style.display = 'block';  // Make the error message visible
-    setTimeout(() => errorDiv.style.display = 'none', 5000);  // Hide after 5 seconds
-}
+    const vin = document.getElementById('vin').value;
+    const vinError = document.getElementById('vin-error');
+    const vinDuplicateError = document.getElementById('vin-duplicate-error');
+    const successMessage = document.getElementById('success-message');
+    const errorMessage = document.getElementById('error-message');
+    const vinLength = vin.length;
 
-// Example for form validation
-function validateForm() {
-    const vin = document.getElementById("vin").value;
-    const make = document.getElementById("make").value;
-    const model = document.getElementById("model").value;
-    const year = document.getElementById("year").value;
+    // Hide any previous messages
+    vinError.style.display = 'none';
+    vinDuplicateError.style.display = 'none';
+    successMessage.style.display = 'none';
+    errorMessage.style.display = 'none';
 
-    if (!vin || !make || !model || !year) {
-        showErrorMessage("All fields are required!");
-        return false;  // Prevent form submission
+    // Check if VIN is exactly 17 characters
+    if (vinLength !== 17) {
+        vinError.style.display = 'block'; // Show VIN length error
+        return;
     }
-    return true;  // Allow form submission if valid
-}
 
-// Function to submit the form data via Fetch API
-function submitVehicleRegistration(event) {
-    event.preventDefault(); // Prevent the form from submitting the traditional way
-
-    if (validateForm()) {
-        const vehicleData = {
-            vin: document.getElementById("vin").value,
-            make: document.getElementById("make").value,
-            model: document.getElementById("model").value,
-            year: parseInt(document.getElementById("year").value),
-            latitude: parseFloat(document.getElementById("latitude").value || 0),
-            longitude: parseFloat(document.getElementById("longitude").value || 0),
-        };
-
-        fetch('/vehicle/register', {
+    try {
+        // Make the API request to check if the VIN is already registered
+        const response = await fetch('http://localhost:8080/vehicle/api/check-vin', { // Full URL here
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',  // Send JSON data
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(vehicleData),  // Stringify the vehicle data
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showSuccessMessage(data.message);
-            } else {
-                showErrorMessage(data.error);  // Show error message
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);  // Log any errors
-            showErrorMessage("Error registering vehicle: " + error);
+            body: JSON.stringify({ vin }) // Send VIN in the request body
         });
+
+        if (!response.ok) {
+            throw new Error('Failed to check VIN');
+        }
+
+        const data = await response.json();
+
+        // Log response data for debugging
+        console.log("VIN check response:", data);
+
+        if (data.isRegistered) {
+            vinDuplicateError.style.display = 'block'; // Show VIN already registered error
+            successMessage.style.display = 'none';
+        } else {
+            successMessage.textContent = 'Vehicle Registered Successfully!';
+            successMessage.style.display = 'block';
+            vinDuplicateError.style.display = 'none'; // Hide duplicate error if VIN is unique
+        }
+    } catch (error) {
+        console.error("Error checking VIN:", error);
+        errorMessage.textContent = 'An error occurred while checking the VIN.';
+        errorMessage.style.display = 'block';
     }
 }
