@@ -1,0 +1,105 @@
+/* General Body Styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f8ff;  /* Light background for brightness */
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; /* Make items stack vertically */
+    min-height: 100vh; /* Vertically center the content */
+    margin: 0;
+}
+
+/* Header Styling */
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Form Styling */
+form {
+    background: linear-gradient(145deg, #ff5c8d, #ff7db5);  /* Bright gradient background */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+form div {
+    margin-bottom: 15px;
+}
+
+form label {
+    display: block;
+    font-weight: bold;
+    color: #fff;  /* White text for labels */
+    margin-bottom: 5px;
+}
+
+form input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    background-color: #fff;
+    font-size: 16px;
+    color: #333;
+}
+
+form input:focus {
+    border-color: #ff5c8d;  /* Highlight border on focus */
+    outline: none;
+}
+
+/* Submit Button Styling */
+form button {
+    background-color: #ff5c8d;  /* Bright pink button */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #ff2d6f;  /* Darker pink on hover */
+}
+
+/* Error Message Styling */
+div.error-message {
+    color: red;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+/* Make sure the form is centered */
+html, body {
+    height: 80%;
+    margin: 0;
+}
+
+/* Add padding around the form elements */
+form div {
+    padding: 8px 0;
+}
+
+/* Example Media Query */
+@media (max-width: 600px) {
+    body {
+        background-color: lightgray;
+    }
+    form {
+        padding: 15px;
+        max-width: 100%;
+    }
+}

@@ -1,65 +1,117 @@
 package com.example.controller;
 
+import com.example.model.VehicleLocation;
 import com.example.model.VehicleModel;
 import com.example.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.http.ResponseEntity; // <-- Add this import
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-@RestController
+@Controller
 @RequestMapping("/vehicle")
 public class VehicleController {
 
     @Autowired
     private VehicleRepository vehicleRepository;
 
-    // POST method for vehicle registration with error handling
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
+    // GET method to display the registration form
+    @GetMapping("/register")
+    public String showRegisterForm(Model model) {
+        model.addAttribute("vehicle", new VehicleModel());  // Add empty vehicle object for binding
+        return "register";  // Render the registration form
+    }
+
+    // POST method for vehicle registration with location data
     @PostMapping("/register")
-    public ResponseEntity<String> registerVehicle(@RequestBody @Valid VehicleModel vehicleModel) {
-        // Check if the vehicle already exists (based on VIN)
-        if (vehicleRepository.existsById(vehicleModel.getVin())) {
-            return new ResponseEntity<>("Vehicle with VIN " + vehicleModel.getVin() + " already exists", HttpStatus.BAD_REQUEST);
+    public String registerVehicle(@ModelAttribute("vehicle") @Valid VehicleModel vehicleModel, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "register";  // Return to the form if there are validation errors
         }
 
-        // Check if any required fields are missing (optional, based on your requirements)
+        // Validate if VIN is present
         if (vehicleModel.getVin() == null || vehicleModel.getVin().isEmpty()) {
-            return new ResponseEntity<>("VIN is required", HttpStatus.BAD_REQUEST);
+            model.addAttribute("error", "VIN is required");
+            return "register";  // Return to the registration form with an error message
         }
-        if (vehicleModel.getMake() == null || vehicleModel.getMake().isEmpty()) {
-            return new ResponseEntity<>("Make is required", HttpStatus.BAD_REQUEST);
+
+        // Check if VIN already exists in the database
+        if (vehicleRepository.existsById(vehicleModel.getVin())) {
+            model.addAttribute("error", "Vehicle with VIN " + vehicleModel.getVin() + " already exists");
+            return "register";  // Return to the registration form with an error message
         }
-        if (vehicleModel.getModel() == null || vehicleModel.getModel().isEmpty()) {
-            return new ResponseEntity<>("Model is required", HttpStatus.BAD_REQUEST);
-        }
-        if (vehicleModel.getYear() <= 0) {
-            return new ResponseEntity<>("Year is invalid", HttpStatus.BAD_REQUEST);
-        }
+
+        // Create a VehicleLocation instance and populate it with location data
+        VehicleLocation vehicleLocation = new VehicleLocation();
+        vehicleLocation.setVin(vehicleModel.getVin());
+        vehicleLocation.setMake(vehicleModel.getMake());
+        vehicleLocation.setModel(vehicleModel.getModel());
+        vehicleLocation.setYear(vehicleModel.getYear());
+
+        // For now, set latitude and longitude to default values (to be updated with actual data)
+        vehicleLocation.setLatitude(0.0);
+        vehicleLocation.setLongitude(0.0);
 
         try {
-            // Save the vehicle to the database
-            vehicleRepository.save(vehicleModel);
-            return new ResponseEntity<>("Vehicle registered successfully", HttpStatus.CREATED);
+            // Save the vehicle with location data to the database
+            vehicleRepository.save(vehicleLocation);
+            model.addAttribute("success", "Vehicle registered successfully!");
+            return "redirect:/vehicle/all";  // Redirect to the page that lists all vehicles after successful registration
         } catch (Exception e) {
-            // Log the error and return an internal server error response
-            return new ResponseEntity<>("Error registering vehicle: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            model.addAttribute("error", "Error registering vehicle: " + e.getMessage());
+            return "register";  // Return to the registration form with an error message
         }
     }
 
-    // GET method to retrieve all vehicles
+    // GET method to retrieve all vehicles and show the list on a page
     @GetMapping("/all")
-    public ResponseEntity<?> getAllVehicles() {
+    public String getAllVehicles(Model model) {
         try {
-            var vehicles = vehicleRepository.findAll();
+            List<VehicleLocation> vehicles = vehicleRepository.findAll();  // Retrieve all vehicle location data
             if (vehicles.isEmpty()) {
-                return new ResponseEntity<>("No vehicles found", HttpStatus.NOT_FOUND);
+                model.addAttribute("message", "No vehicles found");
+            } else {
+                model.addAttribute("vehicles", vehicles);
             }
-            return new ResponseEntity<>(vehicles, HttpStatus.OK);
+            return "vehicleList";  // Thymeleaf will search for a template named "vehicleList.html"
         } catch (Exception e) {
-            // Handle any errors that occur while fetching the vehicles
-            return new ResponseEntity<>("Error retrieving vehicles: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            model.addAttribute("error", "Error retrieving vehicles: " + e.getMessage());
+            return "vehicleList";  // In case of error, show the vehicle list page
         }
+    }
+
+    // Method to periodically update vehicle locations (e.g., every 5 seconds)
+    @Scheduled(fixedRate = 5000)
+    public void sendVehicleLocations() {
+        List<VehicleLocation> vehicles = vehicleRepository.findAll();  // Retrieve all vehicle location data
+        messagingTemplate.convertAndSend("/topic/vehicles", vehicles);  // Send the vehicle data to connected clients
+    }
+
+    // NEW API ENDPOINT: Check if VIN is already registered
+    @PostMapping("/api/check-vin")
+    @ResponseBody
+    public ResponseEntity<Map<String, Boolean>> checkVin(@RequestBody Map<String, String> vinRequest) {
+        String vin = vinRequest.get("vin");
+        
+        // Check if the VIN exists in the database
+        boolean isRegistered = vehicleRepository.existsById(vin);
+
+        // Return response
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("isRegistered", isRegistered);
+
+        return ResponseEntity.ok(response);  // Return response with status 200 OK
     }
 }

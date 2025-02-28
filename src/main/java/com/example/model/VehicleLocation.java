@@ -5,27 +5,31 @@ import jakarta.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
 
 @Entity
-public class VehicleModel {
+public class VehicleLocation {
 
     @Id
     @NotBlank(message = "VIN is required")
-    @Size(min = 17, max = 17, message = "VIN must be exactly 17 characters")
-    private String vin;
+    private String vin;  // Unique identifier for the vehicle (Vehicle Identification Number)
 
     @NotBlank(message = "Make is required")
-    private String make;
+    private String make;  // Vehicle make
 
     @NotBlank(message = "Model is required")
-    private String model;
+    private String model;  // Vehicle model
 
     @NotNull(message = "Year is required")
     @Positive(message = "Year must be a positive number")
-    private int year;
+    private int year;  // Vehicle year
 
-    // Getters and setters for all fields
+    @NotNull(message = "Latitude is required")
+    private Double latitude;  // Latitude of the vehicle
+
+    @NotNull(message = "Longitude is required")
+    private Double longitude;  // Longitude of the vehicle
+
+    // Getters and setters
     public String getVin() {
         return vin;
     }
@@ -56,5 +60,21 @@ public class VehicleModel {
 
     public void setYear(int year) {
         this.year = year;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 }

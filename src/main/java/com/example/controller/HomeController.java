@@ -1,16 +1,22 @@
 package com.example.controller;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController // This is shorthand for @Controller + @ResponseBody
+@Controller // Use @Controller instead of @RestController to render views
 public class HomeController {
 
-    @GetMapping("/home")  // Using @GetMapping for GET requests
+    @GetMapping("/home")  // Mapping for GET requests to /home
     public String home() {
-        return "Welcome to the Home Page!"; // This will be returned as plain text or JSON (if configured)
+        return "home"; // This will render home.html in the templates folder
+    }
+
+    @GetMapping("/register")  // Add the mapping for the register page
+    public String showRegisterPage() {
+        return "register"; // This will render register.html in the templates folder
     }
 }
+
 
 
 

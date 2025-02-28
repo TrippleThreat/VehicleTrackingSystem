@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="author" content="Your Name">
+    <meta name="description" content="Vehicle Registration Form">
+    <title>Vehicle Registration Page</title>
+
+    <style>
+        /* Styling as before */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            background: linear-gradient(145deg, #ff5c8d, #ff7db5);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        form div {
+            margin-bottom: 15px;
+        }
+
+        form label {
+            display: block;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        form input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            background-color: #fff;
+            font-size: 16px;
+            color: #333;
+        }
+
+        form button {
+            background-color: #ff5c8d;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        form button:hover {
+            background-color: #ff2d6f;
+        }
+
+        .error-message {
+            color: red;
+            font-weight: bold;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .success-message {
+            color: green;
+            font-weight: bold;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Register Vehicles</h1>
+    
+    <form id="vehicle-form" onsubmit="submitVehicleRegistration(event)">
+        <div>
+            <label for="vin">VIN:</label>
+            <input type="text" id="vin" name="vin" placeholder="Enter VIN" required maxlength="17" />
+            <div id="vin-error" class="error-message" style="display: none;">VIN must be exactly 17 characters long.</div>
+            <div id="vin-duplicate-error" class="error-message" style="display: none;">Vehicle with this VIN is already registered.</div>
+        </div>
+        <div>
+            <label for="make">Make:</label>
+            <input type="text" id="make" name="make" placeholder="Enter Make" required />
+        </div>
+        <div>
+            <label for="model">Model:</label>
+            <input type="text" id="model" name="model" placeholder="Enter Model" required />
+        </div>
+        <div>
+            <label for="year">Year:</label>
+            <input type="number" id="year" name="year" placeholder="Enter Year" required />
+        </div>
+
+        <button type="submit">Register Vehicle</button>
+    </form>
+
+    <div id="success-message" class="success-message" style="display: none;"></div>
+    <div id="error-message" class="error-message" style="display: none;"></div>
+
+    <script>
+        async function submitVehicleRegistration(event) {
+            event.preventDefault(); // Prevent form submission
+
+            const vin = document.getElementById('vin').value;
+            const vinError = document.getElementById('vin-error');
+            const vinDuplicateError = document.getElementById('vin-duplicate-error');
+            const successMessage = document.getElementById('success-message');
+            const errorMessage = document.getElementById('error-message');
+            const vinLength = vin.length;
+
+            // Hide any previous messages
+            vinError.style.display = 'none';
+            vinDuplicateError.style.display = 'none';
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+
+            // Check if VIN is exactly 17 characters
+            if (vinLength !== 17) {
+                vinError.style.display = 'block'; // Show VIN length error
+                return;
+            }
+
+            try {
+                // Make the API request to check if the VIN is already registered
+                const response = await fetch('http://localhost:8080/vehicle/api/check-vin', { // Full URL here
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ vin }) // Send VIN in the request body
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to check VIN');
+                }
+
+                const data = await response.json();
+
+                // Log response data for debugging
+                console.log("VIN check response:", data);
+
+                if (data.isRegistered) {
+                    vinDuplicateError.style.display = 'block'; // Show VIN already registered error
+                    successMessage.style.display = 'none';
+                } else {
+                    successMessage.textContent = 'Vehicle Registered Successfully!';
+                    successMessage.style.display = 'block';
+                    vinDuplicateError.style.display = 'none'; // Hide duplicate error if VIN is unique
+                }
+            } catch (error) {
+                console.error("Error checking VIN:", error);
+                errorMessage.textContent = 'An error occurred while checking the VIN.';
+                errorMessage.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
