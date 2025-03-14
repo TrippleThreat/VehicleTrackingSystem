@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -78,6 +78,23 @@
             background-color: #ff2d6f;
         }
 
+        .view-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            text-align: center;
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        .view-button:hover {
+            background-color: #45a049;
+        }
+
         .error-message {
             color: red;
             font-weight: bold;
@@ -85,11 +102,21 @@
             font-size: 14px;
         }
 
-        .success-message {
-            color: green;
+        /* Pop-up success message styling */
+        .success-popup {
+            background-color: #ff5c8d;  /* Same as button color */
+            color: white;
             font-weight: bold;
-            margin-top: 10px;
-            font-size: 16px;
+            padding: 15px;
+            border-radius: 5px;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: none;  /* Initially hidden */
+            font-size: 18px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
@@ -119,7 +146,11 @@
         <button type="submit">Register Vehicle</button>
     </form>
 
-    <div id="success-message" class="success-message" style="display: none;"></div>
+    <!-- "View Registered Vehicles" Button -->
+    <a href="http://localhost:8080/vehicle/all" class="view-button">View Registered Vehicles</a>
+
+    <!-- Success message pop-up -->
+    <div id="success-popup" class="success-popup">Vehicle Registered Successfully!</div>
     <div id="error-message" class="error-message" style="display: none;"></div>
 
     <script>
@@ -129,14 +160,14 @@
             const vin = document.getElementById('vin').value;
             const vinError = document.getElementById('vin-error');
             const vinDuplicateError = document.getElementById('vin-duplicate-error');
-            const successMessage = document.getElementById('success-message');
+            const successPopup = document.getElementById('success-popup');
             const errorMessage = document.getElementById('error-message');
             const vinLength = vin.length;
 
             // Hide any previous messages
             vinError.style.display = 'none';
             vinDuplicateError.style.display = 'none';
-            successMessage.style.display = 'none';
+            successPopup.style.display = 'none';
             errorMessage.style.display = 'none';
 
             // Check if VIN is exactly 17 characters
@@ -166,10 +197,16 @@
 
                 if (data.isRegistered) {
                     vinDuplicateError.style.display = 'block'; // Show VIN already registered error
-                    successMessage.style.display = 'none';
+                    successPopup.style.display = 'none';
                 } else {
-                    successMessage.textContent = 'Vehicle Registered Successfully!';
-                    successMessage.style.display = 'block';
+                    successPopup.textContent = 'Vehicle Registered Successfully!';
+                    successPopup.style.display = 'block';
+
+                    // Hide the success message after 3 seconds
+                    setTimeout(() => {
+                        successPopup.style.display = 'none';
+                    }, 3000);
+
                     vinDuplicateError.style.display = 'none'; // Hide duplicate error if VIN is unique
                 }
             } catch (error) {

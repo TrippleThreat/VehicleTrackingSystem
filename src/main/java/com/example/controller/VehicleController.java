@@ -6,7 +6,7 @@ import com.example.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.http.ResponseEntity; // <-- Add this import
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -104,7 +104,7 @@ public class VehicleController {
     @ResponseBody
     public ResponseEntity<Map<String, Boolean>> checkVin(@RequestBody Map<String, String> vinRequest) {
         String vin = vinRequest.get("vin");
-        
+
         // Check if the VIN exists in the database
         boolean isRegistered = vehicleRepository.existsById(vin);
 
@@ -113,5 +113,55 @@ public class VehicleController {
         response.put("isRegistered", isRegistered);
 
         return ResponseEntity.ok(response);  // Return response with status 200 OK
+    }
+
+    // Update vehicle information based on VIN
+    @GetMapping("/update/{vin}")
+    public String showUpdateForm(@PathVariable("vin") String vin, Model model) {
+        VehicleLocation vehicle = vehicleRepository.findById(vin).orElse(null);
+        if (vehicle == null) {
+            model.addAttribute("error", "Vehicle with VIN " + vin + " not found");
+            return "vehicleList";  // Redirect to the list page if the vehicle is not found
+        }
+
+        model.addAttribute("vehicle", vehicle);  // Populate the form with existing vehicle data
+        return "updateVehicle";  // Render the update form
+    }
+
+    @PostMapping("/update")
+    public String updateVehicle(@ModelAttribute("vehicle") VehicleLocation vehicleLocation, Model model) {
+        try {
+            VehicleLocation existingVehicle = vehicleRepository.findById(vehicleLocation.getVin()).orElse(null);
+            if (existingVehicle == null) {
+                model.addAttribute("error", "Vehicle with VIN " + vehicleLocation.getVin() + " not found");
+                return "vehicleList";  // Return to the vehicle list page if the vehicle doesn't exist
+            }
+
+            // Update vehicle data
+            existingVehicle.setMake(vehicleLocation.getMake());
+            existingVehicle.setModel(vehicleLocation.getModel());
+            existingVehicle.setYear(vehicleLocation.getYear());
+            existingVehicle.setLatitude(vehicleLocation.getLatitude());
+            existingVehicle.setLongitude(vehicleLocation.getLongitude());
+
+            vehicleRepository.save(existingVehicle);
+            model.addAttribute("success", "Vehicle updated successfully!");
+            return "redirect:/vehicle/all";  // Redirect to the list page after successful update
+        } catch (Exception e) {
+            model.addAttribute("error", "Error updating vehicle: " + e.getMessage());
+            return "updateVehicle";  // Return to the update form if an error occurs
+        }
+    }
+
+    // Delete a vehicle by VIN
+    @PostMapping("/delete/{vin}")
+    public String deleteVehicle(@PathVariable("vin") String vin, Model model) {
+        try {
+            vehicleRepository.deleteById(vin);
+            model.addAttribute("success", "Vehicle with VIN " + vin + " deleted successfully!");
+        } catch (Exception e) {
+            model.addAttribute("error", "Error deleting vehicle: " + e.getMessage());
+        }
+        return "redirect:/vehicle/all";  // Redirect to the list page after deletion
     }
 }
