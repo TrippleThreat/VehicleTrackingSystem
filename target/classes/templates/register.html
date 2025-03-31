@@ -1,15 +1,119 @@
-<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="author" content="Your Name">
-    <meta name="description" content="Vehicle Registration Form">
     <title>Vehicle Registration Page</title>
-
     <style>
-        /* Styling as before */
+        /* Header styles */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #333;
+            color: white;
+            width: 100%;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        header .search-bar {
+            display: flex;
+            align-items: center;
+        }
+
+        header .search-bar input {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+        }
+
+        header .search-bar button {
+            background-color: #ff5c8d;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        header .search-bar button:hover {
+            background-color: #ff2d6f;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            padding: 10px;
+            background-color: #ff5c8d;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        header a:hover {
+            background-color: #ff2d6f;
+        }
+
+        /* Hamburger Menu Styles */
+        .hamburger-menu {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 30px;
+            height: 21px;
+            cursor: pointer;
+        }
+
+        .hamburger-menu div {
+            width: 30px;
+            height: 3px;
+            background-color: white;
+            border-radius: 5px;
+        }
+
+        /* Dropdown Menu Styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #333;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 5px;
+        }
+
+        /* Update text color to black and background to green */
+        .dropdown-content a {
+            color: black; /* Set text color to black */
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 16px;
+            background-color: #4CAF50; /* Set green background */
+        }
+
+        .dropdown-content a:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+
+        .dropdown.show .dropdown-content {
+            display: block;
+        }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f8ff;
@@ -22,12 +126,6 @@
             margin: 0;
         }
 
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
         form {
             background: linear-gradient(145deg, #ff5c8d, #ff7db5);
             padding: 30px;
@@ -35,7 +133,7 @@
             box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 600px;
-            margin: 0 auto;
+            margin: 40px auto 0;
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -66,33 +164,16 @@
         form button {
             background-color: #ff5c8d;
             color: white;
-            padding: 12px 20px;
+            padding: 8px 16px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 16px;
             transition: background-color 0.3s ease;
         }
 
         form button:hover {
             background-color: #ff2d6f;
-        }
-
-        .view-button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 5px;
-            text-align: center;
-            display: inline-block;
-            margin-top: 20px;
-            text-decoration: none;
-            font-size: 18px;
-            transition: background-color 0.3s ease;
-        }
-
-        .view-button:hover {
-            background-color: #45a049;
         }
 
         .error-message {
@@ -118,11 +199,51 @@
             font-size: 18px;
             box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
         }
+
+        /* Responsive Styles for smaller screens */
+        @media screen and (max-width: 768px) {
+            header .search-bar {
+                display: none; /* Hide search bar for mobile */
+            }
+        }
+
     </style>
 </head>
 <body>
-    <h1>Register Vehicles</h1>
-    
+
+    <header>
+        <!-- Title: NUMADIC CAR TRACK -->
+        <h1>NUMADIC CAR TRACK</h1>
+        
+        <!-- Search bar -->
+        <div class="search-bar">
+            <input type="text" placeholder="Search vehicles..." />
+            <button>Search</button>
+        </div>
+
+        <!-- Login Link (updated link to login page) -->
+        <a th:href="@{/loginPage}">Login</a>
+
+        <!-- Hamburger Menu Icon (moved to login button position) -->
+        <div class="hamburger-menu" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
+        <!-- Dropdown Menu -->
+        <div class="dropdown">
+            <div class="dropdown-content">
+                <a th:href="@{/transaction-records}">Transaction Records</a>
+                <a th:href="@{http://localhost:8080/vehicle/all}">View Registered Vehicles</a>
+                <!-- New Admin link added below "View Registered Vehicles" -->
+                <a th:href="@{/admin}">Admin</a>
+                <!-- Logout button is now last in the dropdown -->
+                <a th:href="@{/logout}">Logout</a>
+            </div>
+        </div>
+    </header>
+
     <form id="vehicle-form" onsubmit="submitVehicleRegistration(event)">
         <div>
             <label for="vin">VIN:</label>
@@ -146,14 +267,17 @@
         <button type="submit">Register Vehicle</button>
     </form>
 
-    <!-- "View Registered Vehicles" Button -->
-    <a href="http://localhost:8080/vehicle/all" class="view-button">View Registered Vehicles</a>
-
     <!-- Success message pop-up -->
     <div id="success-popup" class="success-popup">Vehicle Registered Successfully!</div>
     <div id="error-message" class="error-message" style="display: none;"></div>
 
     <script>
+        // Toggle the dropdown menu visibility
+        function toggleMenu() {
+            const dropdown = document.querySelector('.dropdown');
+            dropdown.classList.toggle('show');
+        }
+
         async function submitVehicleRegistration(event) {
             event.preventDefault(); // Prevent form submission
 

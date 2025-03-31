@@ -77,4 +77,16 @@ public class VehicleLocation {
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
+
+    @Override
+    public String toString() {
+        return "VehicleLocation{" +
+                "vin='" + vin + '\'' +
+                ", make='" + make + '\'' +
+                ", model='" + model + '\'' +
+                ", year=" + year +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                '}';
+    }
 }

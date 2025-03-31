@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <h2>Login</h2>
+
+    <!-- Optional: Display logout success message -->
+    <div id="logout-message" style="color: green; display: none;">
+        You have logged out successfully.
+    </div>
+    
+    <!-- Spring Security form login: Username and password fields -->
+    <form action="/login" method="post">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required><br><br>
+        </div>
+        
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br><br>
+        </div>
+        
+        <button type="submit">Login</button>
+    </form>
+
+    <!-- Optional: Error message if login fails -->
+    <div>
+        <p style="color:red;">
+            <span th:if="${param.error}">Invalid username or password.</span>
+        </p>
+    </div>
+
+    <script>
+        // Check if the 'logout' parameter is in the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('logout')) {
+            document.getElementById('logout-message').style.display = 'block'; // Show logout message
+        }
+    </script>
+</body>
+</html>
